@@ -1,15 +1,42 @@
 #include "Expression.hpp"
 #include <iostream>
 
+void tests ();
+
 int main () {
-  std::string input = "-32. ^4 +(11-(3 * 2 ) ) / 2";
-  // input = "(4+3.0)*2-(7+3)/2";
-  // input = "";
-  if (input.empty()) {
-    std:: cout << "Expression string empty\n"; 
-    exit (0);
-  }
-  Expression Expression(input);
-  Expression.EvaluateRPN();
-  std::cout << Expression.GetEvalResult() << std::endl;
+  tests ();
+}
+
+
+void tests () {
+  Expression *expr = new Expression();
+  double result;
+
+  expr->SetExpression("32 ^4 +(11-(3 * 2 ) ) / 2");
+  expr->EvaluateRPN();
+  result = expr->GetEvalResult();
+  if (!std::isnan(result))
+    std::cout << "Result of evaluation: " << result << std::endl;
+  else 
+    std::cout << "Evaluation not successful" << std::endl;
+
+  std::cout<< std::endl;
+
+  expr->SetExpression("(4+3)*2-(7+3)/2");
+  expr->EvaluateRPN();
+  result = expr->GetEvalResult();
+  if (!std::isnan(result))
+    std::cout << "Result of evaluation: " << result << std::endl;
+  else 
+    std::cout << "Evaluation not successful" << std::endl;
+
+  std::cout<< std::endl;
+
+  expr->SetExpression("(4+3)*2-(7+3)/0");
+  expr->EvaluateRPN();
+  result = expr->GetEvalResult();
+  if (!std::isnan(result))
+    std::cout << "Result of evaluation: " << result << std::endl;
+  else 
+    std::cout << "Evaluation not successful" << std::endl;
 }

@@ -4,35 +4,45 @@
 #include <iostream>
 #include "Expression.hpp"
 #include <stdio.h>
+#include <limits>
 using namespace std;
 
 const string errorDelimiter = " -> ";
 
-typedef enum tokenTypes {
-  None = 0,
-  Operand = 1,
-  Operator = 2,
-  LeftParan = 3,
-  RightParan = 4,
-} tokenTypes;
 /*
     Expression Class Implementation
 */
 
 #define p(X) cout << (X) << endl;
 
-Expression :: Expression (const string input) : inputExpression (input) {
+Expression :: Expression () {
+  expressionResult = 0.0;
   tokens.clear();
   tokensRPN.clear();
 }
 
+Expression :: Expression (const string input) : inputExpression(input) {
+  expressionResult = numeric_limits<double>::quiet_NaN();
+  evaluationSuccess = false;
+  tokens.clear();
+  tokensRPN.clear();
+  cout << "Expression: \"" << input << "\" initialized\n";
+}
+
+void Expression :: SetExpression (const string input) {
+  inputExpression = input;
+  expressionResult = std::numeric_limits<double>::quiet_NaN();
+  evaluationSuccess = false;
+  tokens.clear();
+  tokensRPN.clear();
+  cout << "Expression: \"" << input << "\" initialized\n";
+}
+
 void Expression :: ParseTokens () {
-  int i= 0, inputLength = inputExpression.size();
+  uint i= 0, inputLength = inputExpression.size();
   int paranCnt = 0;
   string tempToken;
   char currentSymbol;
-  char prevSymbol;
-  tokenTypes lastTokenType = None;
 
   for (i = 0; i < inputLength; ++i) {
     currentSymbol = inputExpression[i];
@@ -45,6 +55,10 @@ void Expression :: ParseTokens () {
     }
 
     if (_isDigit(currentSymbol)) {
+      tempToken += currentSymbol;
+    }
+
+    else if (currentSymbol == '.') {
       tempToken += currentSymbol;
     }
 
@@ -84,6 +98,8 @@ void Expression :: ParseTokens () {
     cout << "Opening parenthesis missing.\nAborting.\n";
     exit (0);
   }
+
+  uint tokensCount = tokens.size();
   tempToken = tokens.front();
   bool tempIsOp = isOperator(tempToken);
   if ( tempIsOp ) {
@@ -101,7 +117,6 @@ void Expression :: ParseTokens () {
     exit (0);
   }
 
-  int tokensCount = tokens.size(), j;
   for (i = 1; i < tokensCount; ++i) {
     if (_isNumber(tokens[i-1])  && _isNumber(tokens[i])) {
       cout << "Two operands in a row: " << tokens[i-1] << " " << tokens[i] << "\nAborting.\n";
@@ -116,7 +131,7 @@ void Expression :: ParseTokens () {
 
 void Expression :: CreateRPN () {
   ParseTokens();
-  int i, tokensCount = tokens.size();
+  uint i, tokensCount = tokens.size();
   stack <string> s; 
 
   for(i = 0; i < tokensCount; ++i) {
@@ -147,6 +162,7 @@ void Expression :: CreateRPN () {
     s.pop();
   }
 
+  cout << "Reverse Polish Notation of input expression: ";
   for (i = 0; i < tokensRPN.size(); ++i) {
     cout << tokensRPN[i] << " ";
   }
@@ -155,7 +171,7 @@ void Expression :: CreateRPN () {
 
 void Expression :: EvaluateRPN () {
   CreateRPN();
-  int i, tokensRPNCount = tokensRPN.size();
+  uint i, tokensRPNCount = tokensRPN.size();
   stack <double> evalResult;
 
   for(i = 0; i < tokensRPNCount; i++) {
@@ -168,19 +184,28 @@ void Expression :: EvaluateRPN () {
     else {
       double rOperand = evalResult.top(); evalResult.pop();
       double lOperand = evalResult.top(); evalResult.pop();
+      if (rOperand == 0 and currentRPNToken[0] == '/') {
+        evalResult = stack<double>();
+        cout << "Division by zero\n";
+        break;
+      }
       double currentEval = opTable[currentRPNToken[0]](lOperand, rOperand);
       evalResult.push(currentEval);
     }
   }
 
-  // TODO
   if (!evalResult.empty()) {
     expressionResult = evalResult.top();
+    evaluationSuccess = true;
+  }
+  else {
+    expressionResult = numeric_limits<double>::quiet_NaN();
+    evaluationSuccess = false;
   }
 }
 
 double Expression :: GetEvalResult () {
-  return expressionResult;
+  return expressionResult;   
 }
 
 
@@ -196,10 +221,12 @@ int _priority (const string &c) {
 }
 
 bool _isNumber (const string &symbol) {
-  bool isNumber = false;
-  for(unsigned int i = 0; i < symbol.size(); i++)
-    if(!_isDigit(symbol[i]))
-      return false;
+  try {
+    stod (symbol);
+  }
+  catch (...) {
+    return false;
+  }
   return true;
 }
 bool _isDigit (const char &c) {

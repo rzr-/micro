@@ -13,12 +13,14 @@ class Expression {
   double expressionResult;
   // Input expression string
   std::string inputExpression;
+  //
+  bool evaluationSuccess = false;
   // Input string parsed into operands and operators
   std::vector <std::string> tokens;
   // Tokens represented in Reverse Polish Notation
   std::vector <std::string> tokensRPN; 
   // Operations mapped to lambda functions
-  std::map < const char, std::function<double(double,double)> > opTable {
+  std::map < const char, std::function<double(double, double)> > opTable {
     {'+',[](double a, double b){ return a + b;} },
     {'-',[](double a, double b){ return a - b;} },
     {'*',[](double a, double b){ return a * b;} },
@@ -31,10 +33,12 @@ class Expression {
   void CreateRPN ();
   
 public:
+  Expression();
   Expression(const std::string input);
+  void SetExpression(const std::string input);
   // Main expression evaluation function
-  void EvaluateRPN ();
-  double GetEvalResult ();
+  void EvaluateRPN();
+  double GetEvalResult();
 };
 
 
