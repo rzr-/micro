@@ -4,39 +4,48 @@
 void tests ();
 
 int main () {
-  tests ();
+	tests ();
 }
 
 
 void tests () {
-  Expression *expr = new Expression();
-  double result;
+	Expression *expr = new Expression("32 ^4 +(11-(3 * 2 ) ) / 2");
+	double result;
 
-  expr->SetExpression("32 ^4 +(11-(3 * 2 ) ) / 2");
-  expr->EvaluateRPN();
-  result = expr->GetEvalResult();
-  if (!std::isnan(result))
-    std::cout << "Result of evaluation: " << result << std::endl;
-  else 
-    std::cout << "Evaluation not successful" << std::endl;
+	result = expr->Value();
+	if (!std::isnan(result))
+		std::cout << "Result of evaluation: " << result << std::endl;
+	else 
+		std::cout << "Evaluation not successful" << std::endl;
+	delete expr;
+    
+    std::cout << std::endl;
 
-  std::cout<< std::endl;
+    expr = new Expression("-32 ^-4 +(11-(3 * 2 ) ) / 2");
+    result = expr->Value();
+    if (!std::isnan(result))
+        std::cout << "Result of evaluation: " << result << std::endl;
+    else 
+        std::cout << "Evaluation not successful" << std::endl;
+    delete expr;
 
-  expr->SetExpression("(4+3)*2-(7+3)/2");
-  expr->EvaluateRPN();
-  result = expr->GetEvalResult();
-  if (!std::isnan(result))
-    std::cout << "Result of evaluation: " << result << std::endl;
-  else 
-    std::cout << "Evaluation not successful" << std::endl;
+    std::cout << std::endl;
 
-  std::cout<< std::endl;
+    expr = new Expression("(4+3)*2-(7+3)/2");
+	result = expr->Value();
+	if (!std::isnan(result))
+		std::cout << "Result of evaluation: " << result << std::endl;
+	else 
+		std::cout << "Evaluation not successful" << std::endl;
+	delete expr;
 
-  expr->SetExpression("(4+3)*2-(7+3)/0");
-  expr->EvaluateRPN();
-  result = expr->GetEvalResult();
-  if (!std::isnan(result))
-    std::cout << "Result of evaluation: " << result << std::endl;
-  else 
-    std::cout << "Evaluation not successful" << std::endl;
+    std::cout << std::endl;
+    
+    expr = new Expression("(4+3)*2-(7+3)/0");
+	result = expr->Value();
+	if (!std::isnan(result))
+		std::cout << "Result of evaluation: " << result << std::endl;
+	else 
+		std::cout << "Evaluation not successful" << std::endl;
+    delete expr;
 }
