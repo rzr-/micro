@@ -46,7 +46,6 @@ private:
     /*
         Common functions
     */
-
     int  priority (const std::string &c);
     bool isNumber (const std::string &symbol);
     bool isDigit (const char &c);
@@ -55,6 +54,5 @@ private:
     bool isOperator  (const std::string &c);
     bool isDelimiter (const char &c);
 };
-
 
 #endif // EXPRESSION_HPP
