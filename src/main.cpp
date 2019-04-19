@@ -17,6 +17,7 @@ const std::vector <std::tuple<std::string, double>> test_cases {
     { "(4+3)*2-(7+3)/2",   double(9) },
     { "(4+3.)*2-(7+3)/2",  double(9) },
     { "(4+3.0)*2-(7+3)/2", double(9) },
+    { "(4+3)*2-(7+3)/2.9", double(10.5517241) },
     // Error cases
     { "(4+3)*2-(7+3)/0",     quiet_nan },
     { "(4+3)-*2-(7+3)/0",    quiet_nan },
@@ -24,14 +25,12 @@ const std::vector <std::tuple<std::string, double>> test_cases {
     { "((=4+3)*2-(7+3)/0",   quiet_nan },
     { "(4(+3)*2-(7+3)/0",    quiet_nan },
     { "(4(+3))*2-(7+3)/0",   quiet_nan },
-    
-    { "(4+3)*2-(7+3)/2.9",   quiet_nan },
     { "(4+3...)*2-(7+3)/2",  quiet_nan },
     { "(4+3.2.)*2-(7+3)/2",  quiet_nan },
     { "(4+3.2.2)*2-(7+3)/2", quiet_nan },
     { "(4+3. .)*2-(7+3)/2",  quiet_nan },
     { "(4+3. .0)*2-(7+3)/2", quiet_nan },
-    { "(4+.3)*2-(7+3)/2",    quiet_nan }
+    { "(4+.3)*2-(7+3)/2",    quiet_nan } 
 };
 
 int main () {
